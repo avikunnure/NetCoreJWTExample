@@ -34,6 +34,11 @@ namespace WebApplication.Controllers
             }
         };
 
+        /// <summary>
+        /// Generate an Access token
+        /// </summary>
+        /// <param name="userLogins"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult GetToken(UserLogins userLogins)
         {
@@ -59,46 +64,12 @@ namespace WebApplication.Controllers
                 }
                 return Ok(Token);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> RefreshToken(string Token)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(Token)) throw new ArgumentException(nameof(Token));
-
-
-                var ExToken = JwtHelpers.JwtHelpers.GetTokenFromRefreshToken(Token, jwtSettings);
-                if (ExToken == null)
-                {
-                    return BadRequest($"'{Token}' is not valid Refresh token");
-                }
-                var user = logins.FirstOrDefault(x => x.UserName.Equals(ExToken.UserName, StringComparison.OrdinalIgnoreCase));
-                if (user == null)
-                {
-                    return BadRequest($"User is Not valid got this refresh Token");
-                }
-              
-                var token = JwtHelpers.JwtHelpers.GenTokenkey(new UserTokens()
-                {
-                    EmailId = user.EmailId,
-                    GuidId = Guid.NewGuid(),
-                    UserName = user.UserName,
-                    Id = user.Id,
-
-                }, jwtSettings);
-                return Ok(token);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
 
 
         /// <summary>
