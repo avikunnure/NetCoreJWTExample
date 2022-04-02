@@ -35,13 +35,13 @@ namespace WebApplication.JwtHelpers
                 // Get secret key
                 var key = System.Text.Encoding.ASCII.GetBytes(jwtSettings.IssuerSigningKey);
                 Guid Id = Guid.Empty;
-                DateTime expireTime = DateTime.UtcNow.AddDays(1);
+                DateTime expireTime = DateTime.UtcNow.AddMinutes(5);
                 UserToken.Validaty = expireTime.TimeOfDay;
                 var JWToken = new JwtSecurityToken(
                     issuer: jwtSettings.ValidIssuer,
                     audience: jwtSettings.ValidAudience,
                     claims: GetClaims(model, out Id),
-                    notBefore: new DateTimeOffset(DateTime.Now).DateTime,
+                    notBefore: new DateTimeOffset(DateTime.UtcNow).DateTime,
                     expires: new DateTimeOffset(expireTime).DateTime,
                     signingCredentials: new SigningCredentials
                     (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
@@ -54,6 +54,7 @@ namespace WebApplication.JwtHelpers
                 UserToken.UserName = model.UserName;
                 UserToken.Id = model.Id;
                 UserToken.GuidId = Id;
+                UserToken.ExpiredTime = expireTime;
                 return UserToken;
             }
             catch (Exception)
