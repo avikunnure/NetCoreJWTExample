@@ -16,7 +16,7 @@ namespace WebApplication.JwtHelpers
                 new Claim(ClaimTypes.Name, userAccounts.UserName),
                 new Claim(ClaimTypes.Email, userAccounts.EmailId),
                 new Claim(ClaimTypes.NameIdentifier,Id.ToString()),
-                new Claim(ClaimTypes.Expiration,DateTime.UtcNow.AddDays(1).ToString("MMM ddd dd yyyy HH:mm:ss tt") )
+                new Claim(ClaimTypes.Expiration,DateTime.Now.AddDays(1).ToString("MMM ddd dd yyyy HH:mm:ss tt") )
                     };
             return claims;
         }
@@ -35,13 +35,13 @@ namespace WebApplication.JwtHelpers
                 // Get secret key
                 var key = System.Text.Encoding.ASCII.GetBytes(jwtSettings.IssuerSigningKey);
                 Guid Id = Guid.Empty;
-                DateTime expireTime = DateTime.UtcNow.AddMinutes(5);
+                DateTime expireTime = DateTime.Now.AddMinutes(5);
                 UserToken.Validaty = expireTime.TimeOfDay;
                 var JWToken = new JwtSecurityToken(
                     issuer: jwtSettings.ValidIssuer,
                     audience: jwtSettings.ValidAudience,
                     claims: GetClaims(model, out Id),
-                    notBefore: new DateTimeOffset(DateTime.UtcNow).DateTime,
+                    notBefore: new DateTimeOffset(DateTime.Now).DateTime,
                     expires: new DateTimeOffset(expireTime).DateTime,
                     signingCredentials: new SigningCredentials
                     (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
